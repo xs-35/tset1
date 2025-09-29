@@ -1,0 +1,47 @@
+/* style.css */
+body {
+  font-family: "Cairo", sans-serif;
+  background: #f4f6f8;
+  margin: 0;
+  direction: rtl;
+}
+.header {
+  background: #0077b6;
+  color: white;
+  padding: 10px 20px;
+}
+.header h1 { margin: 0; font-size: 20px; }
+.nav a {
+  color: white;
+  margin-left: 12px;
+  text-decoration: none;
+}
+.wrap { max-width: 1000px; margin: auto; padding: 20px; }
+.card {
+  background: #fff;
+  padding: 18px;
+  margin: 20px 0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.btn {
+  display: inline-block;
+  padding: 10px 14px;
+  background: #0077b6;
+  color: white;
+  border-radius: 6px;
+  text-decoration: none;
+  margin-top: 10px;
+}
+.table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+.table th, .table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: right;
+}
+.table th { background: #00b4d8; color: #fff; }
+.footer {
+  text-align: center;
+  padding: 15px;
+  color: #555;
+}

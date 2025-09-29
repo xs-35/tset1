@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>لوحة الأدمن</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background: #f0f4c3;
+            font-family: 'Tahoma', sans-serif;
+        }
+        h1 {
+            color: #388e3c;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .sidebar {
+            height: 100vh;
+            background: #388e3c;
+            color: white;
+            padding-top: 20px;
+        }
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .sidebar a:hover {
+            background: #2e7d32;
+        }
+        .table th, .table td {
+            vertical-align: middle;
+        }
+        .btn {
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #2e7d32;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-3 sidebar">
+                <h3 class="text-center mb-4">👑 الأدمن</h3>
+                <a href="#supervisors">إدارة المشرفين</a>
+                <a href="#patients">إدارة المرضى</a>
+                <a href="#aiResponses">إدارة ردود الذكاء الاصطناعي</a>
+                <a href="#sessions">إدارة الجلسات</a>
+                <a href="#stats">الإحصائيات</a>
+                <a href="index.html">🔙 تسجيل خروج</a>
+            </div>
+            <!-- Main content -->
+            <div class="col-9 p-4">
+                <h1>لوحة التحكم</h1>
+                <hr>
+                <!-- Supervisors -->
+                <section id="supervisors" class="mb-5">
+                    <h3>المشرفين</h3>
+                    <table class="table table-bordered bg-white">
+                        <thead>
+                            <tr>
+                                <th>الاسم</th>
+                                <th>الصلاحيات</th>
+                                <th>إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="supervisorTable">
+                            <tr>
+                                <td>مشرف 1</td>
+                                <td>إدارة المرضى، الإحصائيات</td>
+                                <td>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteSupervisor(this)">حذف</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="input-group mb-3">
+                        <input type="text" id="newSupervisorName" class="form-control" placeholder="اسم المشرف الجديد" aria-label="New Supervisor Name">
+                        <button class="btn btn-success" id="addSupervisorButton">➕ إضافة مشرف جديد</button>
+                    </div>
+                </section>
+
+                <!-- AI Responses -->
+                <section id="aiResponses" class="mb-5">
+                    <h3>إدارة ردود الذكاء الاصطناعي</h3>
+                    <table class="table table-bordered bg-white">
+                        <thead>
+                            <tr>
+                                <th>العبارة</th>
+                                <th>الرد</th>
+                                <th>الحالة</th>
+                                <th>إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="aiResponseTable">
+                            <tr>
+                                <td>مرحبًا</td>
+                                <td>مرحبًا! كيف يمكنني مساعدتك اليوم؟</td>
+                                <td>مفعل</td>
+                                <td>
+                                    <button class="btn btn-sm btn-warning" onclick="toggleResponse(this)">إلغاء</button>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteResponse(this)">حذف</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="input-group mb-3">
+                        <input type="text" id="newPhrase" class="form-control" placeholder="العبارة الجديدة" aria-label="New Phrase">
+                        <input type="text" id="newResponse" class="form-control" placeholder="الرد الجديد" aria-label="New Response">
+                        <button class="btn btn-success" id="addResponseButton">➕ إضافة رد</button>
+                    </div>
+                </section>
+                
+                <!-- Stats -->
+                <section id="stats">
+                    <h3>📊 الإحصائيات</h3>
+                    <canvas id="chart" height="150"></canvas>
+                </section>
+                <button class="btn btn-secondary mt-4" onclick="goBack()">🔙 العودة</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // إضافة مشرف جديد
+        document.getElementById('addSupervisorButton').addEventListener('click', function() {
+            const supervisorName = document.getElementById('newSupervisorName').value.trim();
+            if (supervisorName) {
+                const table = document.getElementById('supervisorTable');
+                const newRow = table.insertRow();
+                newRow.innerHTML = `
+                    <td>${supervisorName}</td>
+                    <td>إدارة المرضى، الإحصائيات</td>
+                    <td>
+                        <button class="btn btn-sm btn-danger" onclick="deleteSupervisor(this)">حذف</button>
+                    </td>
+                `;
+                document.getElementById('newSupervisorName').value = '';
+            }
+        });
+
+        // حذف مشرف
+        function deleteSupervisor(button) {
+            const row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+        }
+
+        // إضافة رد جديد
+        document.getElementById('addResponseButton').addEventListener('click', function() {
+            const phrase = document.getElementById('newPhrase').value.trim();
+            const response = document.getElementById('newResponse').value.trim();
+            if (phrase && response) {
+                const table = document.getElementById('aiResponseTable');
+                const newRow = table.insertRow();
+                newRow.innerHTML = `
+                    <td>${phrase}</td>
+                    <td>${response}</td>
+                    <td>مفعل</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning" onclick="toggleResponse(this)">إلغاء</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteResponse(this)">حذف</button>
+                    </td>
+                `;
+                document.getElementById('newPhrase').value = '';
+                document.getElementById('newResponse').value = '';
+            }
+        });
+
+        // إلغاء تفعيل رد
+        function toggleResponse(button) {
+            const row = button.parentNode.parentNode;
+            const statusCell = row.cells[2];
+            if (statusCell.innerText === "مفعل") {
+                statusCell.innerText = "ملغي";
+                button.innerText = "تفعيل";
+                button.classList.remove('btn-warning');
+                button.classList.add('btn-success');
+            } else {
+                statusCell.innerText = "مفعل";
+                button.innerText = "إلغاء";
+                button.classList.remove('btn-success');
+                button.classList.add('btn-warning');
+            }
+        }
+
+        // حذف رد
+        function deleteResponse(button) {
+            const row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+        }
+
+        const ctx = document.getElementById('chart');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['مريض 1','مريض 2','مريض 3','مريض 4'],
+                datasets: [{
+                    label: 'عدد الجلسات المكتملة',
+                    data: [5,3,4,2],
+                    backgroundColor: ['#198754','#0d6efd','#ffc107','#dc3545']
+                }]
+            }
+        });
+
+        // دالة للعودة للخلف
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</body>
+</html>
